@@ -59,11 +59,10 @@ X_test = np.array(X_test, dtype=np.float)
 y_train = np.array(y_train, dtype=np.float)
 y_test = np.array(y_test, dtype=np.float)
 
-
-num_epochs = 15
-batch_size = 32
-validation_split = 0.2
+#num_epochs = 15
+#batch_size = 32
+#validation_split = 0.2
 
 clf = Classifier(vocabulary_size, maxlen)
-clf.fit(X_train, y_train, num_epochs, batch_size, validation_split)
+clf.fit(X_train, y_train)
 clf.evaluate(X_test, y_test)
