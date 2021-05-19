@@ -24,22 +24,18 @@ sc = spark.sparkContext
 sc.setLogLevel("Error")
 '''
 
-# Training
+# Training & Testing
 MSR = MirroredStrategyRunner(num_slots=1, local_mode=True, use_gpu=False)
 model, history = MSR.run(train)
-
-# Testing
-_, _, X_test, y_test = load_sms_spam_data()
-print(model.evaluate(X_test, y_test))
 
 
 num_epochs = 15
 # Plot loss
 loss = history.history['loss']
-#val_loss = history.history['val_loss']
+val_loss = history.history['val_loss']
 
 plt.plot(range(num_epochs), loss, 'b', label='Training loss')
-#plt.plot(15, val_loss, 'r', label='Validation loss')
+plt.plot(range(num_epochs), val_loss, 'r')
 plt.title('Loss plot')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
@@ -47,10 +43,10 @@ plt.legend()
 plt.show()
 
 # Plot accuracy
-loss = history.history['acc']
-#val_acc = history.history['val_acc']
-plt.plot(range(num_epochs), loss, 'b', label='Training accuracy')
-#plt.plot(15, val_loss, 'r', label='Validation loss')
+acc = history.history['acc']
+val_acc = history.history['val_acc']
+plt.plot(range(num_epochs), acc, 'b', label='Training accuracy')
+plt.plot(range(num_epochs), val_acc, 'r')
 plt.title('Accuracy plot')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
