@@ -1,2 +1,2 @@
-# SMS-Spam-Detector-with-Spark
-SMS Spam Detector with Spark
+# SMS-Spam-Detection-with-Spark
+SMS Spam Detection with Spark
