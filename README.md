@@ -54,7 +54,7 @@ or if you want to set some parameters of Spark:
 $SPARK_HOME/bin/spark-submit --master spark://s01:7077 --executor-cores 2 --executor-memory 2g main.py
 ```
 ## 6. Shut down all
-At the end you can remove from AWS everything you have created with this command on yout machine in the folder project:
+At the end you can remove from AWS everything you have created with this command on your machine in the folder project:
 ```
 terraform destroy
 ```
