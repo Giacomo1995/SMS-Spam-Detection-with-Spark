@@ -1,54 +1,58 @@
 # Imports
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import tensorflow as tf
-import tensorflow_datasets as tfds
-import sklearn as sk
-from sklearn.model_selection import train_test_split
+import os
 
-import tensorflow.keras
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
-from spark_tensorflow_distributor import MirroredStrategyRunner
+import findspark
+from pyspark.sql import SparkSession
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml import Pipeline
+from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+from pyspark.ml.feature import HashingTF, IDF, Tokenizer
+from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
 
 from utils import *
-from training import *
+from classifier import *
 
 
-'''
-spark = SparkSession.builder.master("<Master>").appName("sms_spam_detector_with_spark")\
-    .config("spark.driver.memory" , "1g")\
-    .config("spark.executor.memory" , "1g").enableHiveSupport().getOrCreate()
-sc = spark.sparkContext
-sc.setLogLevel("Error")
-'''
+findspark.init()
 
-# Training & Testing
-MSR = MirroredStrategyRunner(num_slots=1, local_mode=True, use_gpu=False)
-model, history = MSR.run(train)
+spark = SparkSession.builder.master("spark://s01:7077")\
+                            .appName("SmsSpamDetector")\
+                            .config("spark.worker.cleanup.enabled", True)\
+                            .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")\
+                            .config("spark.kryo.registrationRequired", "false")\
+                            .getOrCreate()
 
 
-num_epochs = 15
-# Plot loss
-loss = history.history['loss']
-val_loss = history.history['val_loss']
+spark.sparkContext.addPyFile('SSDS.zip')
 
-plt.plot(range(num_epochs), loss, 'b', label='Training loss')
-plt.plot(range(num_epochs), val_loss, 'r')
-plt.title('Loss plot')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
+dataset = spark.read.format("csv").option("header", True).option("multiLine", True).option("escape","\"").load("hdfs://s01:9000/dataset.csv")
 
-# Plot accuracy
-acc = history.history['acc']
-val_acc = history.history['val_acc']
-plt.plot(range(num_epochs), acc, 'b', label='Training accuracy')
-plt.plot(range(num_epochs), val_acc, 'r')
-plt.title('Accuracy plot')
-plt.xlabel('Epochs')
-plt.ylabel('Accuracy')
-plt.legend()
-plt.show()
+training_set, test_set = load_dataset(spark)
+
+# Initialize Classifier
+clf = Classifier()
+
+# Run cross-validation and choose the best set of parameters
+clf.fit(training_set)
+
+# Make predictions on test set on the best model found
+result = clf.evaluate(test_set)
+
+# Best model parameters
+params = clf.cvModel.bestModel.stages[2]
+print("MODEL PARAMETERS:")
+print("Number of Features: ", params.numFeatures)
+print(params.explainParam("regParam"))
+print(params.explainParam("elasticNetParam"))
+
+# Print Accuracy and F-Measure evaluation metrics
+predictionAndLabels = result.select("prediction", "label")
+
+evaluator = MulticlassClassificationEvaluator(metricName="accuracy")
+print("\nAccuracy: " + str(evaluator.evaluate(predictionAndLabels)))
+
+evaluator = MulticlassClassificationEvaluator(metricName="fMeasureByLabel", metricLabel=1)
+print("F-Measure: " + str(evaluator.evaluate(predictionAndLabels)))
