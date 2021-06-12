@@ -1,60 +1,58 @@
 # Imports
-import matplotlib.pyplot as plt
-import tensorflow.keras
-from keras.models import Sequential
-from keras.layers import Embedding, Dense, Flatten, Dropout
+from pyspark.ml import Pipeline
+from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+from pyspark.ml.feature import HashingTF, IDF, Tokenizer
+from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
 
-from utils import *
 
 class Classifier:
+    """
+    (Binary) Logistic Regression Classifier selected through a Grid Search and a k-fold cross-validation
+    """
 
-    def __init__(self, vocabulary_size, input_length):
-        # Network architecture
-        model = Sequential()
-        model.add(Embedding(vocabulary_size, 32, input_length=input_length))
-        model.add(Flatten())
-        #model.add(Dense(32, activation='relu'))
-        #model.add(Dropout(0.2))
-        model.add(Dense(1, activation='sigmoid'))
+    def __init__(self, k=3):
+        # Configure an ML pipeline, which consists of tree stages: tokenizer, hashingTF, and clf
+        tokenizer = Tokenizer(inputCol="text", outputCol="words")
+        hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(), outputCol="features")
 
-        # Compiling the model
-        model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc', f1])
-        model.summary()
+        clf = LogisticRegression(maxIter=1)
+        pipeline = Pipeline(stages=[tokenizer, hashingTF, clf])
 
-        self.model = model
+        # Set parameters for grid search
+        numFeaturesList = [1000, 2500, 5000, 7500, 10000]
+        regParamList = [0.1, 0.01, 0.001]
+        elasticNetParamList = [0, 0.25, 0.5, 0.75, 1]
 
+        paramGrid = ParamGridBuilder() \
+          .addGrid(hashingTF.numFeatures, numFeaturesList) \
+          .addGrid(clf.regParam, regParamList) \
+          .addGrid(clf.elasticNetParam, elasticNetParamList) \
+          .build()
 
-    def fit(self, X_train, y_train, num_epochs = 15, batch_size = 32, validation_split = 0.2):
-        history = self.model.fit(X_train, y_train, epochs=num_epochs, batch_size=batch_size, validation_split=validation_split)
+        num_models = len(paramGrid)
 
-        # Plotting loss and accuracy
+        crossval = CrossValidator(estimator=pipeline,
+                                estimatorParamMaps=paramGrid,
+                                evaluator=MulticlassClassificationEvaluator(),
+                                numFolds=k,
+                                parallelism=num_models)
 
-        epochs = range(num_epochs)
-
-        # Loss plot
-        loss = history.history['loss']
-        val_loss = history.history['val_loss']
-
-        plt.plot(epochs, loss, 'b', label='Training loss')
-        plt.plot(epochs, val_loss, 'r', label='Validation loss')
-        plt.title('Training and Validation loss')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss')
-        plt.legend()
-        plt.show()
-
-        # Accuracy plot
-        acc = history.history['acc']
-        val_acc = history.history['val_acc']
-
-        plt.plot(epochs, acc, 'b', label='Training acc')
-        plt.plot(epochs, val_acc, 'r', label='Validation acc')
-        plt.title('Training and Validation accuracy')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        plt.legend()
-        plt.show()
+        self.clf = clf
+        self.crossval = crossval
 
 
-    def evaluate(self, X_test, y_test):
-        self.model.evaluate(X_test, y_test)
+    def fit(self, training_set):
+        """
+        Runs a cross-validation and selects the model with the best set of parameters
+        """
+
+        self.cvModel = self.crossval.fit(training_set)
+
+
+    def evaluate(self, test_set):
+        """
+        Makes predictions on the test set: cvModel uses the best model found
+        """
+
+        return self.cvModel.transform(test_set)
