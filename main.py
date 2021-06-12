@@ -28,8 +28,6 @@ spark = SparkSession.builder.master("spark://s01:7077")\
 
 spark.sparkContext.addPyFile('SSDS.zip')
 
-dataset = spark.read.format("csv").option("header", True).option("multiLine", True).option("escape","\"").load("hdfs://s01:9000/dataset.csv")
-
 training_set, test_set = load_dataset(spark)
 
 # Initialize Classifier
