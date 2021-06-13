@@ -1,6 +1,7 @@
 # Imports
 #import numpy as np
 #import pandas as pd
+#import matplotlib.pyplot as plt
 #import tensorflow_datasets as tfds
 
 
@@ -32,6 +33,22 @@ def load_dataset(spark, file_name="dataset.csv"):
   test_set = test_legit.union(test_spam)
 
   return training_set, test_set
+
+
+'''
+def plot():
+    numFeaturesList = np.array([1, 2.5, 5, 7.5, 10])
+    regParamList = np.array([0.1, 0.01, 0.001])
+    elasticNetParamList = np.array([0, 0.25, 0.5, 0.75, 1])
+
+    meshgrid = np.meshgrid(numFeaturesList, regParamList, elasticNetParamList)
+
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    ax.scatter3D(meshgrid[0], meshgrid[1], meshgrid[2])
+    fig.savefig('gridsearch.png', dpi=300)
+    plt.show()
+'''
 
 
 '''
