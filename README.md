@@ -62,3 +62,6 @@ In the end, you can remove from AWS everything you have created with this comman
 ```
 terraform destroy
 ```
+## See also
+- [Hadoop/Spark with Terraform on AWS](https://github.com/conema/spark-terraform.git)
+- [SMS Spam Collection Dataset](https://www.kaggle.com/uciml/sms-spam-collection-dataset)
