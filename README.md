@@ -21,7 +21,7 @@ token      = ""
 Open the file `variables.tf` and pay attention to change values of:
 - "region": must be the same of key-pair created above;
 - "access_key" and "secret_key": are the same listed above;
-- "datanode_count" and "instance_type": choose number and type of the EC2 for your project (for this project, we have tested five t2.medium instances)
+- "datanode_count" and "instance_type": choose number and type of the EC2 for your project (for this project, we have tested seven t2.medium instances)
 - "subnet_id": go to AWS and search [Subnets](https://console.aws.amazon.com/vpc/home?region=us-east-1#subnets:), copy the name of `Subnet ID` with *IPv4 CIDR = 172.31.0.0/20*
 
 Open the file `main.tf` and in row 22 substitute `*.*.*.*` with your public IP.
