@@ -1,5 +1,5 @@
 # SMS Spam Detection with Spark
-In this project, we implemented a classification task to detect spam in SMS showing how distributed computation may improve efficiency when dealing with Machine Learning techniques.
+Implementation of a classification task to detect spam in text messages using Spark.
 
 ## 1. Terraform
 Terraform is an open-source infrastructure as a code software tool created by HashiCorp. Users define and provide data center infrastructure using a declarative configuration language.
@@ -57,7 +57,7 @@ or if you want to set some parameters of Spark:
 ```
 $SPARK_HOME/bin/spark-submit --master spark://s01:7077 --executor-cores 2 --executor-memory 2g main.py
 ```
-## 6. Shut down
+## 7. Shut down
 In the end, you can remove from AWS everything you have created with this command on your machine in the folder project:
 ```
 terraform destroy
