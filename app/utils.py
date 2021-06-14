@@ -64,15 +64,13 @@ def run_cmd(cmd):
   :param cmd: command splitted in a list
   :return: void
   """
-
-  print('System command: {0}'.format(' '.join(cmd)))
-  proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  s_output, s_err = proc.communicate()
-  s_return = proc.returncode
-  print(s_output)
-  if (s_return > 0):
-    print(s_err)
-    exit()
+  try:
+    print('System command: {0}'.format(' '.join(command)))
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    s_output, s_err = proc.communicate()
+    s_return = proc.returncode
+  except Exception as e:
+    print(e)
 
     
 '''
