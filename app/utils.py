@@ -3,17 +3,29 @@
 #import pandas as pd
 #import matplotlib.pyplot as plt
 #import tensorflow_datasets as tfds
+import boto3
+from botocore import UNSIGNED
+from botocore.client import Config
+import subprocess
 
 
-def load_dataset(spark, file_name="dataset.csv"):
+def load_dataset(spark, file_name="dataset.csv", from_s3=True):
   """
-  Reads the SMS spam dataset and splits it into training set (0.8) and test set (0.2) by a stratified sampling procedure.
+  Reads the SMS spam dataset from Amazon S3, generate hdfs, and splits it into training set (0.8) and test set (0.2) by a stratified sampling procedure.
   It returns both training set and test set as Spark Dataframes.
   """
+  
+  if from_s3:
+    BUCKET_NAME = "ssdsdataset"
+    download_from_s3(BUCKET_NAME, file_name)
+
+  #make hdfs of dataset
+  run_cmd(['hdfs', 'dfs', '-put', file_name, "/"+file_name])
+  run_cmd(['rm', file_name])
 
   # Load CSV
   #dataset = spark.read.format("csv").option("header", True).option("multiLine", True).option("escape","\"").load("dataset.csv")
-  dataset = spark.read.format("csv").option("header", True).option("multiLine", True).option("escape","\"").load("hdfs://s01:9000/dataset.csv")
+  dataset = spark.read.format("csv").option("header", True).option("multiLine", True).option("escape","\"").load("hdfs://s01:9000/"+file_name)
   dataset = dataset.withColumnRenamed('x', 'text')
   dataset = dataset.withColumnRenamed('y', 'label')
 
@@ -34,7 +46,35 @@ def load_dataset(spark, file_name="dataset.csv"):
 
   return training_set, test_set
 
+def download_from_s3(bucket_name, file_name):
+  """
+  Downloads a public file from a bucket of Amazon s3
+  :param bucket_name: bucket from which read the file
+  :param file_name: file to read
+  :return: void
+  """
 
+  s3 = boto3.client('s3', config=Config(signature_version=UNSIGNED))
+  s3.download_file(bucket_name, file_name, file_name)  # get object and file (key) from bucket
+
+
+def run_cmd(command):
+  """
+  Executes a bash command
+  :param command: command splitted in a list
+  :return: void
+  """
+
+  print('System command: {0}'.format(' '.join(args_list)))
+  proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  s_output, s_err = proc.communicate()
+  s_return = proc.returncode
+  print(s_output)
+  if (s_return > 0):
+    print(s_err)
+    exit()
+
+    
 '''
 def plot():
     numFeaturesList = np.array([1, 2.5, 5, 7.5, 10])
