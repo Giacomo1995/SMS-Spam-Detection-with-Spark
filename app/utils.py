@@ -58,15 +58,15 @@ def download_from_s3(bucket_name, file_name):
   s3.download_file(bucket_name, file_name, file_name)  # get object and file (key) from bucket
 
 
-def run_cmd(command):
+def run_cmd(cmd):
   """
   Executes a bash command
-  :param command: command splitted in a list
+  :param cmd: command splitted in a list
   :return: void
   """
 
-  print('System command: {0}'.format(' '.join(args_list)))
-  proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  print('System command: {0}'.format(' '.join(cmd)))
+  proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   s_output, s_err = proc.communicate()
   s_return = proc.returncode
   print(s_output)
