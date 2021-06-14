@@ -54,7 +54,7 @@ def main():
 
     # Print the results
     print("LOGISTIC REGRESSION")
-    params = lr_cvmodel.bestModel.stages[2]
+    params = lr_clf.cvModel.bestModel.stages[2]
     print("Number of Features: ", params.numFeatures)
     print(params.explainParam("regParam"))
     print(params.explainParam("elasticNetParam"))
@@ -69,7 +69,7 @@ def main():
     print("\n--------------------------------------------------------------------------------------------")
 
     print("\nMLP")
-    params = mlp_cvmodel.bestModel.stages[2]
+    params = mlp_clf.cvModel.bestModel.stages[2]
     print("Number of Features: ", params.numFeatures)
     print(params.explainParam("blockSize"))
     print(params.explainParam("layers"))
@@ -85,7 +85,7 @@ def main():
     print("\n--------------------------------------------------------------------------------------------")
 
     print("\nNAIVE BAYES")
-    params = nb_cvmodel.bestModel.stages[2]
+    params = nb_clf.cvModel.bestModel.stages[2]
     print("Number of Features: ", params.numFeatures)
     print(params.explainParam("smoothing"))
 
