@@ -55,7 +55,7 @@ variable "namenode_count" {
 
 variable "datanode_count" {
   type    = number
-  default = 6 # count = 3 = 3 aws EC2
+  default = 5 # count = 3 = 3 aws EC2
 }
 
 variable "subnet_id" {
@@ -70,7 +70,6 @@ variable "ips" {
     "2" = "172.31.0.104"
     "3" = "172.31.0.105"
     "4" = "172.31.0.106"
-    "5" = "172.31.0.107"
   }
 }
 
@@ -81,6 +80,5 @@ variable "hostnames" {
     "2" = "s04"
     "3" = "s05"
     "4" = "s06"
-    "5" = "s07"
   }
 }
