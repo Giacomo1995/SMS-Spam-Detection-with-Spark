@@ -45,7 +45,6 @@ Access the master and run the following commands to start Hadoop, master, and sl
 ```
 sh hadoop-start-master.sh
 $SPARK_HOME/sbin/start-master.sh
-hdfs dfs -put ~/dataset.csv /dataset.csv
 $SPARK_HOME/sbin/start-slaves.sh
 ```
 ## 6. Start application
