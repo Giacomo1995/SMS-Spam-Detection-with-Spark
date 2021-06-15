@@ -34,12 +34,12 @@ class Classifier:
 
         # Multi-Layer Perceptron
         if classifier == 'mlp':
-            clf = MultilayerPerceptronClassifier(maxIter=10)
+            clf = MultilayerPerceptronClassifier(maxIter=10, seed=0)
             pipeline = Pipeline(stages=[tokenizer, hashingTF, clf])
 
             # Set parameters for grid search
             numFeaturesList = [1000]
-            layerList = [[1000, 100, 10, 2], [1000, 8, 2], [1000, 64, 8, 2]]
+            layerList = [[1000, 10, 2], [1000, 8, 2], [1000, 64, 8, 2]]
             blockSizeList = [32, 64, 128]
 
             paramGrid = ParamGridBuilder() \
