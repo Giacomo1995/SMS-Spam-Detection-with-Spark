@@ -17,6 +17,7 @@ pip3 install matplotlib
 pip3 install sklearn
 pip3 install tfds-nightly
 pip3 install pyspark
+pip3 install boto3
 sudo apt-get -y install openjdk-8-jdk
 sudo apt update
 sudo apt upgrade -y
