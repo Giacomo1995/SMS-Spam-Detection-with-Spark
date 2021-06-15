@@ -76,10 +76,18 @@ class Classifier:
 
 
     def fit(self, training_set):
+        """
+        Runs a cross-validation and selects the model with the best set of parameters
+        """
+        
         # Run cross-validation, and choose the best set of parameters
         self.cvModel = self.crossval.fit(training_set)
 
 
     def evaluate(self, test_set):
+        """
+        Makes predictions on the test set: cvModel uses the best model found
+        """
+        
         # Make predictions on test set. cvModel uses the best model found
         return self.cvModel.transform(test_set)
