@@ -65,8 +65,8 @@ def run_cmd(cmd):
   :return: void
   """
   try:
-    print('System command: {0}'.format(' '.join(command)))
-    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print('System command: {0}'.format(' '.join(cmd)))
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     s_output, s_err = proc.communicate()
     s_return = proc.returncode
   except Exception as e:
