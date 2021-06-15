@@ -32,8 +32,7 @@ echo '
 172.31.0.103 s03
 172.31.0.104 s04
 172.31.0.105 s05
-172.31.0.106 s06
-172.31.0.107 s07' | sudo tee --append /etc/hosts > /dev/null
+172.31.0.106 s06' | sudo tee --append /etc/hosts > /dev/null
 
 sudo chmod 700 /home/ubuntu/.ssh
 sudo chmod 600 /home/ubuntu/.ssh/id_rsa
@@ -159,7 +158,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
   <property>
     <name>dfs.replication</name>
-    <value>6</value>
+    <value>5</value>
   </property>
   <property>
     <name>dfs.namenode.name.dir</name>
@@ -179,8 +178,7 @@ s02
 s03
 s04
 s05
-s06
-s07' | sudo tee /opt/hadoop-2.7.7/etc/hadoop/slaves > /dev/null
+s06' | sudo tee /opt/hadoop-2.7.7/etc/hadoop/slaves > /dev/null
 
 sudo sed -i -e 's/export\ JAVA_HOME=\${JAVA_HOME}/export\ JAVA_HOME=\/usr\/lib\/jvm\/java-8-openjdk-amd64/g' /opt/hadoop-2.7.7/etc/hadoop/hadoop-env.sh
 
@@ -219,8 +217,7 @@ s02
 s03
 s04
 s05
-s06
-s07' | sudo tee --append conf/slaves > /dev/null
+s06' | sudo tee --append conf/slaves > /dev/null
 
 cp conf/spark-defaults.conf.template conf/spark-defaults.conf
 
