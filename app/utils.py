@@ -16,12 +16,12 @@ def load_dataset(spark, file_name="dataset.csv", from_s3=True):
   """
   
   if from_s3:
+    run_cmd(['rm', file_name]) #delete the local file
     BUCKET_NAME = "ssdsdataset"
     download_from_s3(BUCKET_NAME, file_name)
 
   #make hdfs of dataset
   run_cmd(['hdfs', 'dfs', '-put', file_name, "/"+file_name])
-  run_cmd(['rm', file_name])
 
   # Load CSV
   #dataset = spark.read.format("csv").option("header", True).option("multiLine", True).option("escape","\"").load("dataset.csv")
