@@ -2,12 +2,9 @@
 Implementation of a classification task to detect spam in text messages using Spark.
 
 ## 1. Terraform
-Terraform is an open-source infrastructure as a code software tool created by HashiCorp. Users define and provide data center infrastructure using a declarative configuration language.
+Install [Terraform](https://www.terraform.io/docs/cli/install/apt.html).
 
-[Link to install Terraform](https://www.terraform.io/docs/cli/install/apt.html).
-## 2. AWS
-Amazon Web Services (AWS) is a subsidiary of Amazon providing on-demand cloud computing platforms and APIs.
-
+## 2. AWS (Amazon Web Services)
 After login to AWS:
 - Go to IAM section > `Users` > `Add User`, write a name, check Programmatic Access and proceed. Link an existent policy `AmazonEC2FullAccess` and go on till the `create new user` button, click on it, and save **Access Key Id** and **Secret Access Key** (it will no longer be shown).
 - Create a key pair named amzkey in a PEM file format. Follow the guide on [AWS DOCS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair). Download the key and move it in the `<project>` folder.
